@@ -113,7 +113,7 @@ sequenceDiagram
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/adityasingh9699/Loan-Verification-OCR---API.git
 cd OCR-Solution/backend
 ```
 
@@ -143,7 +143,6 @@ GEMINI_API_KEY=your_gemini_api_key
 
 # Application
 DEBUG=false
-CORS_ORIGINS=http://localhost:3000,https://your-frontend.com
 ```
 
 5. **Run the application**
