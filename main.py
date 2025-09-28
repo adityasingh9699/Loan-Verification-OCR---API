@@ -47,7 +47,25 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    try:
+        from app.services.gemini_service import gemini_ocr
+        model_status = "connected" if gemini_ocr.model else "disconnected"
+        model_name = gemini_ocr.get_current_model_name()
+        
+        return {
+            "status": "healthy",
+            "services": {
+                "gemini_ocr": {
+                    "status": model_status,
+                    "model": model_name
+                }
+            }
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     import uvicorn

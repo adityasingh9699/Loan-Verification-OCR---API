@@ -4,7 +4,7 @@ A powerful FastAPI-based backend service that automates loan application verific
 
 ## ✨ Key Features
 
-- 🔍 **Smart OCR Processing** - Uses Google Gemini AI for accurate document text extraction
+- 🔍 **Smart OCR Processing** - Uses latest Google Gemini 2.5/2.0 AI models for accurate document text extraction
 - 📊 **Automated Verification** - Compares extracted data with loan applications (name, salary, employer, SSN)
 - 🔐 **Secure Authentication** - JWT-based auth with Clerk integration
 - ☁️ **Cloud Storage** - Google Cloud Storage for document management
@@ -164,6 +164,25 @@ docker build -t ocr-loan-verification .
 ```bash
 docker run -p 8000:8000 --env-file .env ocr-loan-verification
 ```
+
+## 🤖 AI Model Capabilities
+
+The service automatically selects the best available Gemini model in this order:
+
+1. **🚀 Gemini 2.5 Flash** - Latest and fastest model with enhanced capabilities
+2. **🚀 Gemini 2.5 Pro** - Latest and most capable model for complex tasks
+3. **⚡ Gemini 2.0 Flash** - Improved performance and accuracy
+4. **⚡ Gemini 2.0 Pro** - Enhanced reasoning and multimodal processing
+5. **✅ Gemini 1.5 Pro** - Stable and reliable fallback
+6. **✅ Gemini 1.5 Flash** - Fast and efficient fallback
+7. **📦 Legacy Models** - Older models for compatibility
+
+### Model Benefits for OCR:
+- **Enhanced Document Understanding** - Better recognition of financial documents
+- **Improved Accuracy** - Higher precision in data extraction
+- **Faster Processing** - Reduced latency for real-time verification
+- **Better Error Handling** - More robust processing of edge cases
+- **Multimodal Support** - Handles various document formats and layouts
 
 ## 🔧 Configuration
 

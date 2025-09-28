@@ -11,12 +11,60 @@ logger = logging.getLogger(__name__)
 class GeminiOCRService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        # Try different model names in order of preference (newest first)
+        self.model_names = [
+            'gemini-2.5-flash',      # Latest and fastest
+            'gemini-2.5-pro',        # Latest and most capable
+            'gemini-2.0-flash',      # Gemini 2.0 series
+            'gemini-2.0-pro',        # Gemini 2.0 series
+            'gemini-1.5-pro',        # Fallback to 1.5 series
+            'gemini-1.5-flash',      # Fallback to 1.5 series
+            'gemini-pro',            # Legacy fallback
+            'gemini-1.0-pro'         # Legacy fallback
+        ]
+        self.model = None
+        self._initialize_model()
+    
+    def _initialize_model(self):
+        """Initialize the model with the first available one"""
+        for model_name in self.model_names:
+            try:
+                self.model = genai.GenerativeModel(model_name)
+                logger.info(f"Successfully initialized Gemini model: {model_name}")
+                
+                # Log model capabilities
+                if '2.5' in model_name:
+                    logger.info("🚀 Using latest Gemini 2.5 model with enhanced capabilities")
+                elif '2.0' in model_name:
+                    logger.info("⚡ Using Gemini 2.0 model with improved performance")
+                elif '1.5' in model_name:
+                    logger.info("✅ Using stable Gemini 1.5 model")
+                else:
+                    logger.info("📦 Using legacy Gemini model")
+                
+                break
+            except Exception as e:
+                logger.warning(f"Failed to initialize model {model_name}: {e}")
+                continue
+        
+        if self.model is None:
+            # List available models for debugging
+            try:
+                available_models = list(genai.list_models())
+                logger.error(f"Available models: {[model.name for model in available_models]}")
+            except Exception as e:
+                logger.error(f"Could not list available models: {e}")
+            raise Exception("Failed to initialize any Gemini model. Please check your API key and model availability.")
+    
+    def get_current_model_name(self) -> str:
+        """Get the name of the currently initialized model"""
+        return self.model.model_name if self.model else "No model initialized"
     
     async def extract_paystub_data(self, image_url: str) -> Dict[str, Any]:
         """Extract structured data from pay stub using Gemini Vision with enhanced processing"""
         try:
             logger.info(f"Extracting data from image URL: {image_url}")
+            logger.info(f"Using Gemini model: {self.get_current_model_name()}")
             if not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY == "your_gemini_api_key_here":
                 logger.error("Gemini API key not configured")
                 raise Exception("Gemini API key not configured")
